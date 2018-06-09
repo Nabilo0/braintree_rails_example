@@ -10,11 +10,11 @@ class CheckoutsController < ApplicationController
   ]
 
   def new
-    @client_token = Braintree::ClientToken.generate
+    @client_token = gateway.client_token.generate
   end
 
   def show
-    @transaction = Braintree::Transaction.find(params[:id])
+    @transaction = gateway.transaction.find(params[:id])
     @result = _create_result_hash(@transaction)
   end
 
@@ -22,9 +22,12 @@ class CheckoutsController < ApplicationController
     amount = params["amount"] # In production you should not take amounts directly from clients
     nonce = params["payment_method_nonce"]
 
-    result = Braintree::Transaction.sale(
+    result = gateway.transaction.sale(
       amount: amount,
       payment_method_nonce: nonce,
+      :options => {
+        :submit_for_settlement => true
+      }
     )
 
     if result.success? || result.transaction
@@ -52,5 +55,16 @@ class CheckoutsController < ApplicationController
         :message => "Your test transaction has a status of #{status}. See the Braintree API response and try again."
       }
     end
+  end
+
+  def gateway
+    env = ENV["BT_ENVIRONMENT"]
+
+    @gateway ||= Braintree::Gateway.new(
+      :environment => env && env.to_sym,
+      :merchant_id => ENV["BT_MERCHANT_ID"],
+      :public_key => ENV["BT_PUBLIC_KEY"],
+      :private_key => ENV["BT_PRIVATE_KEY"],
+    )
   end
 end

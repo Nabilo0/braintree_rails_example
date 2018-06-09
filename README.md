@@ -18,7 +18,7 @@ An example Braintree integration for Ruby on Rails.
   bundle
   ```
 
-3. Copy the `example.env` file to `.env` and fill in your Braintree API credentials. Credentials can be found by navigating to Account > My User > View Authorizations in the Braintree Control Panel. Full instructions can be [found on our support site](https://articles.braintreepayments.com/control-panel/important-gateway-credentials#api-credentials).
+3. Copy the contents of `example.env` into a new file named `.env` and fill in your Braintree API credentials. Credentials can be found by navigating to Account > My User > View Authorizations in the Braintree Control Panel. Full instructions can be [found on our support site](https://articles.braintreepayments.com/control-panel/important-gateway-credentials#api-credentials).
 
 4. Start rails:
 
@@ -46,6 +46,10 @@ Integration tests make API calls to Braintree and require that you set up your B
 ### Running All Tests
 
 You can run both unit and integrations tests by calling `rake spec` on the command line.
+
+## Testing Transactions
+
+Sandbox transactions must be made with [sample credit card numbers](https://developers.braintreepayments.com/reference/general/testing/ruby#credit-card-numbers), and the response of a `Braintree::Transaction.sale()` call is dependent on the [amount of the transaction](https://developers.braintreepayments.com/reference/general/testing/ruby#test-amounts).
 
 ## Pro Tips
 
